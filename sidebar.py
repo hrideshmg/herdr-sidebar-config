@@ -257,7 +257,7 @@ def child_parents(panes, groups):
     return parents
 
 
-def desired_rows(panes, workspaces, tabs, icons="font", inactive_ids=frozenset(), working_glyph="◔", branch_length="standard", pane_names=False, inactive_pane_ids=frozenset(), logo_position="end"):
+def desired_rows(panes, workspaces, tabs, icons="font", inactive_ids=frozenset(), working_glyph="◔", branch_length="standard", pane_names=False, inactive_pane_ids=frozenset(), logo_position="end", tab_tree=True):
     headers = desired_headers(panes, workspaces)
     groups = {}
     tab_ids = {}
@@ -294,7 +294,7 @@ def desired_rows(panes, workspaces, tabs, icons="font", inactive_ids=frozenset()
                     values["hs_terminals"] = "terminals: " + ", ".join(sorted(shells))
             tab_id = pane.get("tab_id")
             workspace_tabs = groups[pane["workspace_id"]]
-            show_tree = len(tab_ids[pane["workspace_id"]]) > 1
+            show_tree = tab_tree and len(tab_ids[pane["workspace_id"]]) > 1
             siblings = workspace_tabs[tab_id]
             first_in_tab = pane["pane_id"] == siblings[0]
             parent = parents[pane["pane_id"]]
@@ -456,7 +456,8 @@ def refresh(clear=False, restore_view=False):
                                branch_length=settings["branch_length"],
                                pane_names=settings["pane_names"],
                                logo_position=settings["logo_position"],
-                               inactive_pane_ids=activity.inactive_pane_ids)
+                               inactive_pane_ids=activity.inactive_pane_ids,
+                               tab_tree=False)
         for pane in panes:
             desired[pane["pane_id"]]["hs_workspace_rank"] = ranks.get(pane["workspace_id"]) if pane.get("agent") else None
         rows = cache_rows(panes, desired, settings["loader_style"]) if animated else []
